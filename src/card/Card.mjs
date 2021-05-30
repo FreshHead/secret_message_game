@@ -10,6 +10,14 @@ export default class Card {
         // Определите в наследнике.
     }
 
+    immuneCheck(opponent) {
+        if (opponent.isImmune) {
+            console.log(`Но у ${opponent.name} есть иммунитет. Игра продолжается.`)
+            return true;
+        }
+        return false;
+    }
+
     toString() {
         return `${this.name} (${this.value})`
     }

@@ -1,34 +1,67 @@
 import Deck from "./card/Deck.mjs"
 import User from "./player/User.mjs"
 import AI from "./player/AI.mjs"
-console.log("Игра началась!")
 
-let grave = []
-let deck = new Deck()
-let user = new User(deck, grave), ai = new AI(deck, grave)
-gameLoop()
+infinite()
 
-function gameLoop() {
-    setTimeout(() => {
-        if (isGameOver()) {
-            return;
+function infinite() {
+    start().then(() => {
+        // infinite()
+    });
+}
+
+async function start() {
+    console.log("Игра началась!")
+
+    let grave = []
+    let deck = new Deck()
+    let user = new User(deck, grave), ai = new AI(deck, grave)
+
+    let curPlayer = user,
+        curOpponent = ai
+    let turnCount = 1
+    let turn = setInterval(() => {
+        if (isGameOver(deck, user, ai)) {
+            clearInterval(turn)
         } else {
-            console.log(`Положение дел: ${user} ${ai}`)
-            user.makeTurn(ai)
+            console.log(`\nХод номер: ${turnCount++}`)
+            curPlayer.makeTurn(curOpponent)
+            curPlayer = curPlayer === user ? ai : user
+            curOpponent = curOpponent === user ? ai : user
         }
-
-        if (isGameOver()) {
-            return;
-        } else {
-            ai.makeTurn(user)
-        }
-
-        gameLoop();
     }, 1000)
 }
 
 
-function isGameOver() {
+
+function gameLoop(deck, user, ai) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            if (isGameOver(deck, user, ai)) {
+                console.log("123")
+                resolve();
+                return;
+            } else {
+                // console.log(`Положение дел: ${user} ${ai}`)
+                user.makeTurn(ai)
+            }
+
+            if (isGameOver(deck, user, ai)) {
+                console.log("1234")
+
+                resolve();
+                return;
+            } else {
+                ai.makeTurn(user)
+            }
+
+            gameLoop(deck, user, ai);
+        })
+    }, 1000)
+}
+
+
+function isGameOver(deck, user, ai) {
     if (user.isDead) {
         console.log('Игрок проиграл')
         return true

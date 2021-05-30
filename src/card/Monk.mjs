@@ -5,6 +5,9 @@ export default class Monk extends Card {
     }
 
     play(player, opponent) {
-        console.log(`Сыграв ${this}, ${player.name} смотрит карту ${opponent.name}. Это ${opponent.showCard()}`)
+        console.log(`Сыграв ${this}, ${player.name} смотрит карту ${opponent.name}.`)
+        if (super.immuneCheck(opponent))
+            return
+        console.log(`Это ${opponent.card}`)
     }
 }

@@ -3,4 +3,6 @@ export default class Countess extends Card {
     constructor() {
         super("Графиня", 7)
     }
+
+ 
 }
