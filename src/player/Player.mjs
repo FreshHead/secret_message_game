@@ -2,14 +2,12 @@ export default class Player {
     cards = []; // Не может быть более 2-х карт
     isImmune = false; // Этот ход защищён под действием служанки
     isDead = false; // Выбыл из игры
-    constructor(name, deck, grave) {
-        this.name = name
-        this.deck = deck
-        this.grave = grave
-        this.cards = [this.deck.pop()]
+	constructor(name, deck, grave) {
+		this.name = name
+		this.grave = grave
+      this.deck = deck
+      this.cards = [this.deck.pop()]
     }
-
-
 
     makeTurn(opponent) {
         this.isImmune = false // Снимаем старый имунитет служанки в начале хода, если он есть.

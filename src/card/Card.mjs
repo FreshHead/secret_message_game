@@ -6,6 +6,7 @@ export default class Card {
         this.play = play || this.play;
     }
 
+	
     play() {
         // Определите в наследнике.
     }
