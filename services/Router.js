@@ -23,6 +23,9 @@ const Router = {
             case "/":
                 pageElement = document.createElement("menu-page");
                 break;
+            case "/login":
+                pageElement = document.createElement("login-page");
+                break;
             case "/order":
                 pageElement = document.createElement("order-page");
                 break;

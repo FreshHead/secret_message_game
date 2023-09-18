@@ -8,7 +8,7 @@ app.store = Store;
 
 window.addEventListener("DOMContentLoaded", () => {
     app.router.init();
-    loadData();
+    app.router.go("/login")
 });
 
 navigator.serviceWorker.register("/serviceworker.js");

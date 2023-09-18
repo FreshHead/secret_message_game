@@ -20,15 +20,8 @@
 
 <body>
     <header>
-        <h1><img src="images/logo.svg" width="140" alt="logo"></h1>
+        <h1>Тайное послание</h1>
         <nav>
-            <a class="navlink material-symbols-outlined" id="linkHome" href="/">
-                    local_cafe
-            </a>
-            <a class="navlink material-symbols-outlined" id="linkOrder" href="/order">
-                    shopping_cart
-            </a>
-            <span id="badge" hidden></span>
         </nav>
     </header>
 
@@ -36,7 +29,18 @@
     </main>
 
     <template id="lobby-page-template">
+        <form>
+            <label for="login">Логин</label>
+            <input id="login">
+            <label for="password">Пароль</label>
+            <input id="passord" type="password">
+            <button>Вход/регистрация</button>
+        </form>
+    </template>
+
+    <template id="lobby-page-template">
         <section>
+            <h2>Список комнат</h2>
             <ul id="lobby"></ul>
         </section>
     </template>
