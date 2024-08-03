@@ -1,0 +1,10 @@
+{
+  "name": "secret_message_game",
+  "version": "0.01",
+  "description": "Фанатская версия игры \"Тайное послание\". Это хобби проект из любви к игре. Покупайте оригинал, он крут.",
+  "main": "game_cli.mjs",
+  "repository": "https://github.com/FreshHead/secret_message_game.git",
+  "author": "Alexander Kostarev <UniverAlex@ya.ru>",
+  "license": "MIT",
+  "private": false
+}
