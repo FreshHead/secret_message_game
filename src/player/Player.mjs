@@ -1,72 +1,68 @@
 export default class Player {
-    cards = []; // Не может быть более 2-х карт
-    isImmune = false; // Этот ход защищён под действием служанки
-    isDead = false; // Выбыл из игры
-	constructor(name, deck, grave) {
-		this.name = name
-		this.grave = grave
-      this.deck = deck
-      this.cards = [this.deck.pop()]
-    }
+  cards = []; // Не может быть более 2-х карт
+  isImmune = false; // Этот ход защищён под действием служанки
+  isDead = false; // Выбыл из игры
+  /**
+   * @param {string} name
+   * @param {Deck} deck
+   * @param {Array} grave
+   */
+  constructor(name, deck, grave) {
+    this.name = name;
+    this.grave = grave;
+    this.deck = deck;
+    this.cards = [this.deck.takeCard()];
+  }
 
-    makeTurn(opponent) {
-        this.isImmune = false // Снимаем старый имунитет служанки в начале хода, если он есть.
-        this.opponent = opponent
-        this.takeCard()
-        this.playCard(0);
-    }
+  makeTurn(opponent, cardIndex) {
+    this.isImmune = false; // Снимаем старый имунитет служанки в начале хода, если он есть.
+    this.opponent = opponent;
+    this.takeCard();
 
-    takeCard() {
-        this.cards.push(this.deck.pop())
-    }
+    const card = this.cards[cardIndex];
+    const otherCard = this.cards[1 - cardIndex];
+    this.playCard(this.isCanBePlayed(card, otherCard) ? card : otherCard);
+  }
 
-    get card() {
-        return this.cards[0]
-    }
+  takeCard() {
+    this.cards.push(this.deck.getCard());
+  }
 
-    playCard() {
-        let playedCard = this.chooseCard()
-        console.log(`${this.name} играет карту ${playedCard}`)
-        playedCard.play(this, this.opponent)
-        this.grave.push(playedCard)
-    }
+  playCard(card) {
+    card.play(this, this.opponent);
+  }
 
-    chooseCard() {
-        let result
-        this.cards.forEach((card, idx) => {
-            if (card.value === 7) {
-                console.log(`Графиня найдена!`)
-                let otherIdx = idx ? 0 : 1
-                let otherCard = this.cards[otherIdx].value
-                if (otherCard.value === 6 || otherCard.value === 5) {
-                    console.log(`${this.name} вынужденно сбрасывает граниню из-за ${otherCard}!`)
-                    debugger
-                    result = card
-                    this.cards.splice(idx, 1)
-                }
-            }
-        })
-        return result || this.cards.shift()
+  looseCard(card) {
+    if (card.value === 7) {
+      this.isDead = true;
     }
+    let idx = this.cards.indexOf(card);
+    this.cards.splice(idx, 1);
+    this.grave.push(card);
+  }
 
-    swapCard(opponent) {
-        let a = this.cards.shift()
-        let b = opponent.cards.shift()
-        this.cards.push(b)
-        opponent.cards.push(a)
-    }
+  isCanBePlayed(card, otherCard) {
+    return otherCard.value !== 7 || card.value === 5 || card.value === 6;
+  }
 
-    changeCard() {
-        console.log(`${this.name} сбрасывает ${this.card} и берёт новую.`)
-        this.grave.push(this.cards.shift())
-        this.takeCard()
-    }
+  swapCard(opponent) {
+    let a = this.cards.shift();
+    let b = opponent.cards.shift();
+    this.cards.push(b);
+    opponent.cards.push(a);
+  }
 
-    get points() {
-        return this.cards[0].value
-    }
+  changeCard() {
+    console.log(`${this.name} сбрасывает ${this.card} и берёт новую.`);
+    this.grave.push(this.cards.shift());
+    this.takeCard();
+  }
 
-    toString() {
-        return `${this.name} ${this.cards[0]}`
-    }
+  get points() {
+    return this.cards[0].value;
+  }
+
+  toString() {
+    return `${this.name} ${this.cards[0]}`;
+  }
 }

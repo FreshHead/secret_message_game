@@ -6,5 +6,9 @@
   "repository": "https://github.com/FreshHead/secret_message_game.git",
   "author": "Alexander Kostarev <UniverAlex@ya.ru>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "scripts": {
+    "start:cli": "node src/game_cli.mjs",
+    "test": "node ./tests/combinations.test.mjs"
+  }
 }

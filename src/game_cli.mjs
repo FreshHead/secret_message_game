@@ -46,8 +46,6 @@ function gameLoop(deck, user, ai) {
       }
 
       if (isGameOver(deck, user, ai)) {
-        console.log("1234");
-
         resolve();
         return;
       } else {
