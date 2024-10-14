@@ -1,12 +1,3 @@
-import Gurdian from "./Gurdian.mjs";
-import Monk from "./Monk.mjs";
-import Baron from "./Baron.mjs";
-import Maid from "./Maid.mjs";
-import Prince from "./Prince.mjs";
-import King from "./King.mjs";
-import Countess from "./Countess.mjs";
-import Princess from "./Princess.mjs";
-
 export default class Deck {
   cardQuantity = {
     Gurdian: 5,
@@ -19,14 +10,14 @@ export default class Deck {
     Princess: 1,
   };
   cardDict = new Map([
-    ["Gurdian", Gurdian],
-    ["Monk", Monk],
-    ["Baron", Baron],
-    ["Maid", Maid],
-    ["Prince", Prince],
-    ["King", King],
-    ["Countess", Countess],
-    ["Princess", Princess],
+    ["Gurdian", { name: 'Стражница', value: 1 }],
+    ["Monk", { name: 'Священник', value: 2 }],
+    ["Baron", { name: 'Барон', value: 3 }],
+    ["Maid", { name: 'Служанка', value: 4 }],
+    ["Prince", { name: 'Принц', value: 5 }],
+    ["King", { name: 'Король', value: 6 }],
+    ["Countess", { name: 'Графиня', value: 7 }],
+    ["Princess", { name: 'Принцесса', value: 8 }],
   ]);
   cards = new Array(16);
 
@@ -43,13 +34,13 @@ export default class Deck {
     // Fill the deck
     for (let cardType in this.cardQuantity) {
       this.cards = this.cards.fill(
-        new (this.cardDict.get(cardType))(),
+        this.cardDict.get(cardType),
         fillIdx,
-        (fillIdx += this.cardQuantity[cardType]),
+        (fillIdx += this.cardQuantity[cardType])
       );
     }
     // Shuffle cards
-    this.cards = this.cards.sort((a, b) => Math.floor(Math.random() * 3 - 1));
+    this.cards = this.cards.sort(() => Math.floor(Math.random() * 3 - 1));
   }
 
   get length() {
@@ -57,6 +48,6 @@ export default class Deck {
   }
 
   getCard() {
-    return this.cards.unshift();
+    return this.cards.pop();
   }
 }
