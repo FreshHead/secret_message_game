@@ -79,11 +79,10 @@ function makeTurn(player, opponents) {
       if (target.hand[0] === cardToKill) {
         console.log(`${player.name} отгадал, ${target.name} выбывает из игры`);
         target.isDead = true;
-        break;
       } else {
         console.log(`${player.name} не отгадал`);
-        break;
       }
+      break;
     case 2:
       console.log(`${player.name} играет священника против ${target.name}`);
       console.log(`У ${target.name} в руке ${cardToString(target.hand[0])}`);
@@ -100,10 +99,11 @@ function makeTurn(player, opponents) {
       } else {
         console.log(`Ничья. Игра продолжается.`)
       }
-
+      break;
     case 4:
       console.log(`${player.name} играет служанку. Теперь у него имунитет до своего следующего хода`);
       player.isImmune = true;
+      break;
     case 5:
       console.log(`${player.name} играет принца на ${target.name}. ${target.name} сбрасывает карту и берёт новую`);
 
@@ -113,8 +113,22 @@ function makeTurn(player, opponents) {
         grave.push(target.hand.pop());
         target.hand.push(deck.getCard());
       }
+      break;
     case 6:
       console.log(`${player.name} меняется картами с ${target.name}`);
+      const playerCard = player.hand.pop();
+      const targetCard = target.hand.pop();
+      player.hand.push(targetCard);
+      target.hand.push(playerCard);
+      break;
+    case 7:
+      console.log(`${player.name} играет графиню. Ничего не происходит`);
+      break;
+    case 8:
+      console.log(`${player.name} играет принцессу и проигрывает. С принцессами не шутят!`);
+      player.isDead = true;
+      break;
     default:
   }
+  grave.push(card);
 }
