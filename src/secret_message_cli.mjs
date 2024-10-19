@@ -2,10 +2,8 @@ import Deck from "./card/Deck.mjs";
 import Player from './player/Player.mjs';
 import AI from "./player/AI.mjs";
 
-const deck = new Deck();
-const grave = [];
-const players = [new AI('Махина', deck.getCard()), new AI('Игорёк', deck.getCard())];
-let existingPlayers = players;
+// Импорт веб-компонент
+import UiOpponent from "./components/UiOpponent.js";
 
 // Всё что касается выбора карт может находится в классе игрока.
 // Он не делает конкретные игровые действия, а передаёт намерение в game loop.
@@ -13,14 +11,36 @@ let existingPlayers = players;
 // Намерено решил не создавать класс Card с подклассами для хранения логики разыгрывания конкретной карты,
 // чтобы карта не могла убивать игроков и т.д. switch в game loop вполне устраивает.
 
-gameLoop();
+document.getElementById('start-btn').addEventListener('click', gameLoop);
 
-function gameLoop() {
-  while (deck.length > 0) {
-    for (let i = 0; i < existingPlayers.length && existingPlayers.length > 1; i++) {
-      makeTurn(existingPlayers[i], players.toSpliced(i, 1));
+async function gameLoop() {
+  const opponentsContainer = document.getElementById('opponents');
+  opponentsContainer.textContent = '';
 
+  console.log('\n\nИгра началась');
+
+  const deck = new Deck();
+  const grave = [];
+  const opponents = [new AI('Махина', deck.getCard()), new AI('Игорёк', deck.getCard()), new AI('Игорёк2', deck.getCard())]
+  const uiOpponents = opponents.forEach(opponent => {
+    const uiOpponent = document.createElement('ui-opponent');
+    uiOpponent.name = opponent.name
+    //uiOpponent.card = opponent.hand[0]
+    document.getElementById('opponents').appendChild(uiOpponent);
+  });
+
+  const players = [...opponents];
+
+  let existingPlayers = players;
+  while (deck.length > 0 && existingPlayers.length > 1) {
+    console.debug(existingPlayers.forEach(player => console.debug(playerToString(player), "color: orange")));
+    for (let i = 0; ; i++) {
       existingPlayers = players.filter((player) => !player.isDead);
+      if (i >= existingPlayers.length || existingPlayers.length === 1) {
+        break;
+      }
+      await makeTurn(existingPlayers[i], players.toSpliced(i, 1), deck, grave);
+
       if (existingPlayers.length === 1) {
         console.log(`${existingPlayers[0].name} победил уничтожив всех противников`);
         return;
@@ -38,21 +58,24 @@ function gameLoop() {
         console.log('Победитель:');
       } else {
         console.log('Победителей несколько:');
-        winners.forEach(showPlayer);
+        winners.forEach(logPlayer);
       }
       console.log('Результаты остальных:');
-      playersByHandValue.toSpliced(0, 1).forEach(showPlayer); break;
+      playersByHandValue.toSpliced(0, 1).forEach(logPlayer); break;
     }
   }
+  console.log('Игра окончена.');
 }
 
-console.log(`Количество карт на кладбище: ${grave.length}`);
+function logPlayer(player) {
+  console.log(playerToString(player));
+}
 
 /**
  * @param {{name: string, hand: Array<{name: string, value: number}>}} player
  */
-function showPlayer(player) {
-  console.log(`${player.name} с ${cardToString(player.hand[0])}`);
+function playerToString(player) {
+  return `%c${player.name} с ${cardToString(player.hand[0])}`;
 }
 
 function cardToString(card) {
@@ -63,13 +86,13 @@ function cardToString(card) {
   * @param {Player} player
   * @param {Array<Player>} opponents
   */
-function makeTurn(player, opponents) {
+async function makeTurn(player, opponents, deck, grave) {
   console.log(`\nХодит ${player.name}`);
   player.isImmune = false; // Снимаем старый иммунитет, если он есть.
   player.hand.push(deck.getCard());
 
   const posibleOpponents = opponents.filter((opponent) => !(opponent.isImmune && opponents.isDead));
-  const { card, target, cardToKill } = player.chooseCardAndTarget(posibleOpponents);
+  const { card, target, cardToKill } = await player.chooseCardAndTarget(posibleOpponents);
 
   switch (card.value) {
     case 1:

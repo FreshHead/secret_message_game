@@ -1,0 +1,20 @@
+.menu {
+	display: flex;
+	justify-content: center;
+}
+
+#opponents {
+	display: flex;
+	justify-content: space-around;
+}
+
+.dead {
+	color: grey;
+}
+
+
+.opponent__card {
+	width: 100px;
+	height: 150px;
+	background-color: grey;
+}
