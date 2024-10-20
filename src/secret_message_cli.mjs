@@ -1,9 +1,11 @@
 import Deck from "./card/Deck.mjs";
 import Player from './player/Player.mjs';
 import AI from "./player/AI.mjs";
+import User from "./player/User.mjs";
 
 // Импорт веб-компонент
 import UiOpponent from "./components/UiOpponent.js";
+import UiUser from "./components/UiUser.js";
 
 // Всё что касается выбора карт может находится в классе игрока.
 // Он не делает конкретные игровые действия, а передаёт намерение в game loop.
@@ -22,14 +24,18 @@ async function gameLoop() {
   const deck = new Deck();
   const grave = [];
   const opponents = [new AI('Махина', deck.getCard()), new AI('Игорёк', deck.getCard()), new AI('Игорёк2', deck.getCard())]
-  const uiOpponents = opponents.forEach(opponent => {
+  const uiOpponents = opponents.map(opponent => {
     const uiOpponent = document.createElement('ui-opponent');
-    uiOpponent.name = opponent.name
-    //uiOpponent.card = opponent.hand[0]
+    uiOpponent.model = opponent
     document.getElementById('opponents').appendChild(uiOpponent);
+    return uiOpponent;
   });
 
-  const players = [...opponents];
+  const uiUser = document.createElement('ui-user');
+  uiUser.model = new User(deck.getCard());
+  document.getElementById('user-container').appendChild(uiUser);
+
+  const players = [uiUser, ...uiOpponents];
 
   let existingPlayers = players;
   while (deck.length > 0 && existingPlayers.length > 1) {
@@ -39,6 +45,7 @@ async function gameLoop() {
       if (i >= existingPlayers.length || existingPlayers.length === 1) {
         break;
       }
+      console.log({currentPlayer: existingPlayers[i], opponents: existingPlayers.toSpliced(i, 1)})
       await makeTurn(existingPlayers[i], players.toSpliced(i, 1), deck, grave);
 
       if (existingPlayers.length === 1) {
