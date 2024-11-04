@@ -3,10 +3,6 @@ import Player from './player/Player.mjs';
 import AI from "./player/AI.mjs";
 import User from "./player/User.mjs";
 
-// Импорт веб-компонент
-import UiOpponent from "./components/UiOpponent.js";
-import UiUser from "./components/UiUser.js";
-
 // Всё что касается выбора карт может находится в классе игрока.
 // Он не делает конкретные игровые действия, а передаёт намерение в game loop.
 // После игры свещенника ИИ должен запоминать какая карта была у противника. 
@@ -24,28 +20,28 @@ async function gameLoop() {
   const deck = new Deck();
   const grave = [];
   const opponents = [new AI('Махина', deck.getCard()), new AI('Игорёк', deck.getCard()), new AI('Игорёк2', deck.getCard())]
-  const uiOpponents = opponents.map(opponent => {
-    const uiOpponent = document.createElement('ui-opponent');
-    uiOpponent.model = opponent
+  opponents.forEach(opponent => {
+    const uiOpponent = document.createElement('div');
+    uiOpponent.textContent = opponent.name;
     document.getElementById('opponents').appendChild(uiOpponent);
-    return uiOpponent;
   });
 
-  const uiUser = document.createElement('ui-user');
-  uiUser.model = new User(deck.getCard());
-  document.getElementById('user-container').appendChild(uiUser);
-
-  const players = [uiUser, ...uiOpponents];
+  const players = [new User(deck.getCard()), ...opponents];
 
   let existingPlayers = players;
   while (deck.length > 0 && existingPlayers.length > 1) {
-    console.debug(existingPlayers.forEach(player => console.debug(playerToString(player), "color: orange")));
+    console.debug('Начало круга. Игроки:\n' + playersToString(existingPlayers));
     for (let i = 0; ; i++) {
       existingPlayers = players.filter((player) => !player.isDead);
-      if (i >= existingPlayers.length || existingPlayers.length === 1) {
+      if (i >= existingPlayers.length || existingPlayers.length === 1 || deck.length == 0) {
         break;
       }
-      console.log({currentPlayer: existingPlayers[i], opponents: existingPlayers.toSpliced(i, 1)})
+      const currentPlayer = existingPlayers[i];
+      console.debug('Текущий игрок: ', playerToString(currentPlayer));
+      const currentPlayerOpponents = existingPlayers.toSpliced(i, 1);
+      console.debug('Его противники:\n', playersToString(currentPlayerOpponents));
+      logDeck(deck);
+      console.debug('Сыгранные карты: ', grave.map(card => cardToString(card)).join(', '));
       await makeTurn(existingPlayers[i], players.toSpliced(i, 1), deck, grave);
 
       if (existingPlayers.length === 1) {
@@ -78,11 +74,18 @@ function logPlayer(player) {
   console.log(playerToString(player));
 }
 
+function logDeck(deck) {
+  console.debug('Карты в колоде: ', deck.length, deck.cards.map(card => cardToString(card)).join(', '));
+}
+
+function playersToString(players) {
+  return players.map(playerToString).join('\n');
+}
 /**
  * @param {{name: string, hand: Array<{name: string, value: number}>}} player
  */
 function playerToString(player) {
-  return `%c${player.name} с ${cardToString(player.hand[0])}`;
+  return `${player.name} с ${cardToString(player.hand[0])}`;
 }
 
 function cardToString(card) {
@@ -96,9 +99,12 @@ function cardToString(card) {
 async function makeTurn(player, opponents, deck, grave) {
   console.log(`\nХодит ${player.name}`);
   player.isImmune = false; // Снимаем старый иммунитет, если он есть.
-  player.hand.push(deck.getCard());
 
-  const posibleOpponents = opponents.filter((opponent) => !(opponent.isImmune && opponents.isDead));
+  player.hand.push(deck.getCard());
+  console.log(`${player.name} берёт карту и у него становится ${player.hand.length} карт`, player.hand.map(cardToString).join(', '));
+  logDeck(deck);
+
+  const posibleOpponents = opponents.filter((opponent) => !opponent.isImmune);
   const { card, target, cardToKill } = await player.chooseCardAndTarget(posibleOpponents);
 
   switch (card.value) {
@@ -142,11 +148,13 @@ async function makeTurn(player, opponents, deck, grave) {
       } else {
         grave.push(target.hand.pop());
         target.hand.push(deck.getCard());
+        console.log(`рука ${target.name} после добора: ${cardToString(target.hand[0])}`);
       }
       break;
     case 6:
       console.log(`${player.name} меняется картами с ${target.name}`);
       const playerCard = player.hand.pop();
+      console.log(`У ${player.name} в руке ${cardToString(playerCard)}`);
       const targetCard = target.hand.pop();
       player.hand.push(targetCard);
       target.hand.push(playerCard);

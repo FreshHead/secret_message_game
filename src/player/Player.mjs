@@ -11,6 +11,7 @@ export default class Player {
     this.hand = [firstCard];
   }
 
+
   isCanBePlayed(card, otherCard) {
     return otherCard.value !== 7 || card.value === 5 || card.value === 6;
   }
