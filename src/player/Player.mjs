@@ -19,4 +19,9 @@ export default class Player {
   get score() {
     return this.hand[0].value;
   }
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
 }

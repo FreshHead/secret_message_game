@@ -1,7 +1,7 @@
 import Deck from "./card/Deck.mjs";
 import Player from './player/Player.mjs';
-import AI from "./player/AI.mjs";
 import User from "./player/User.mjs";
+import RenderedAI from "./player/RenderedAI.mjs";
 
 // Всё что касается выбора карт может находится в классе игрока.
 // Он не делает конкретные игровые действия, а передаёт намерение в game loop.
@@ -19,12 +19,7 @@ async function gameLoop() {
 
   const deck = new Deck();
   const grave = [];
-  const opponents = [new AI('Махина', deck.getCard()), new AI('Игорёк', deck.getCard()), new AI('Игорёк2', deck.getCard())]
-  opponents.forEach(opponent => {
-    const uiOpponent = document.createElement('div');
-    uiOpponent.textContent = opponent.name;
-    document.getElementById('opponents').appendChild(uiOpponent);
-  });
+  const opponents = [new RenderedAI('Махина', deck.getCard()), new RenderedAI('Игорёк', deck.getCard()), new RenderedAI('Игорёк2', deck.getCard())]
 
   const players = [new User(deck.getCard()), ...opponents];
 
@@ -58,7 +53,7 @@ async function gameLoop() {
       }, [])
 
       if (winners.length === 1) {
-        console.log('Победитель:');
+        console.log('Победитель:', playerToString(winners[0]));
       } else {
         console.log('Победителей несколько:');
         winners.forEach(logPlayer);

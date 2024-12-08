@@ -5,7 +5,7 @@ export default class AI extends Player {
     }
 
     async chooseCardAndTarget(opponents) {
-        await this.sleep(1000);
+        await this.sleep(2000);
         const desiredCard = Math.random() > 0.5 ? this.hand.shift() : this.hand.pop();
         const card = this.isCanBePlayed(desiredCard, this.hand[0]) ? desiredCard : this.hand[0];
         const cardToKill = card.value === 1 ? Math.floor(Math.random() * (8 - 1)) + 1 : null
@@ -19,7 +19,4 @@ export default class AI extends Player {
         }
     }
 
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
 }
