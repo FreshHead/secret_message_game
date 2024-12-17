@@ -5,7 +5,7 @@ import RenderedAI from "./player/RenderedAI.mjs";
 
 // Всё что касается выбора карт может находится в классе игрока.
 // Он не делает конкретные игровые действия, а передаёт намерение в game loop.
-// После игры свещенника ИИ должен запоминать какая карта была у противника. 
+// После игры священника ИИ должен запоминать какая карта была у противника. 
 // Намерено решил не создавать класс Card с подклассами для хранения логики разыгрывания конкретной карты,
 // чтобы карта не могла убивать игроков и т.д. switch в game loop вполне устраивает.
 
@@ -63,6 +63,12 @@ async function gameLoop() {
     }
   }
   console.log('Игра окончена.');
+}
+
+function waitForUserClick() {
+  return new Promise((resolve) => {
+    document.getElementById('next-btn').addEventListener('click', resolve, { once: true });
+  })
 }
 
 function logPlayer(player) {
