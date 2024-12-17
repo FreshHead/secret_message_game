@@ -1,4 +1,6 @@
 import Player from "./Player.mjs";
+import { createHandProxy } from "./handRendering.mjs";
+
 export default class User extends Player {
     cardContainer = document.getElementById('card-container');
 
@@ -7,26 +9,7 @@ export default class User extends Player {
         super('Игрок', firstCard)
         this.cardContainer = document.getElementById('user-container').getElementsByClassName('card-container')[0];
 
-        const that = this;
-        this.hand = new Proxy([firstCard], {
-            get(target, prop) {
-                if (['push', 'unshift', 'pop', 'shift'].includes(prop)) {
-                    that.renderCard();
-                }
-                return target[prop];
-            }
-        });
-    }
-
-    renderCard() {
-        this.cardContainer.textContent = '';
-
-        this.hand.forEach((card) => {
-            const uiCard = document.createElement('div');
-            uiCard.innerHTML = card.name;
-            uiCard.classList.add('card');
-            this.cardContainer.appendChild(uiCard);
-        })
+        this.hand = createHandProxy(this.cardContainer, [firstCard]);
     }
 
     async chooseCardAndTarget(opponents) {

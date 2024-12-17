@@ -98,6 +98,7 @@ function cardToString(card) {
   * @param {Array<Player>} opponents
   */
 async function makeTurn(player, opponents, deck, grave) {
+  await waitForUserClick();
   console.log(`\nХодит ${player.name}`);
   player.isImmune = false; // Снимаем старый иммунитет, если он есть.
 
