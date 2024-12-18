@@ -46,3 +46,7 @@ body {
 .active {
 	color: green;
 }
+
+.winner {
+	color: orange;
+}

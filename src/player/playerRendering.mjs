@@ -16,13 +16,23 @@ export function initUi(player, placementDiv) {
                 if (value) {
                     uiOpponent.classList.add('active');
                 } else {
-                    uiOpponent.classList.remove(['active']);
+                    uiOpponent.classList.remove('active');
                 }
+            }
+
+            if (prop === 'isWinner') {
+                if (value) {
+                    uiOpponent.classList.add('winner');
+                }
+            }
+
+            if (prop === 'hand') {
+                renderCards(cardContainer, target[prop]);
             }
             return true;
         },
         get(target, prop) {
-            if (prop === 'hand') {
+            if (prop === 'hand') { // смена через pop() и push()
                 renderCards(cardContainer, target[prop]);
             }
             if (prop === 'isDead') {

@@ -1,8 +1,7 @@
 import Deck from "./card/Deck.mjs";
-import Player from './player/Player.mjs';
 import { createAi, createUser } from "./player/playerFactory.mjs";
-import User from "./player/User.mjs";
-import RenderedAI from "./player/RenderedAI.mjs";
+import { getAiTurn } from "./player/ai.mjs";
+import { sleep } from "./utils.mjs";
 
 // Всё что касается выбора карт может находится в классе игрока.
 // Он не делает конкретные игровые действия, а передаёт намерение в game loop.
@@ -42,6 +41,7 @@ async function gameLoop() {
       await makeTurn(existingPlayers[i], players.toSpliced(i, 1), deck, grave);
 
       if (existingPlayers.length === 1) {
+        existingPlayers[0].isWinner = true;
         console.log(`${existingPlayers[0].name} победил уничтожив всех противников`);
         return;
       }
@@ -53,6 +53,8 @@ async function gameLoop() {
       const winners = playersByHandValue.reduce((acc, player) => {
         return acc.length === 0 || acc[0].hand[0] === player.hand[0] ? [...acc, player] : acc;
       }, [])
+
+      winners.forEach(winner => winner.isWinner = true)
 
       if (winners.length === 1) {
         console.log('Победитель:', playerToString(winners[0]));
@@ -100,19 +102,22 @@ function cardToString(card) {
   * @param {Array<Player>} opponents
   */
 async function makeTurn(player, opponents, deck, grave) {
+  player.isMakingTurn = true;
+  // await waitForUserClick();
   // Игроки это простой объект с набором свойств. Сверху на него навещивается Proxy и получается игрок с ui. Методы ИИ могут смотреть на св-во type, чтобы не использовать классы.
   // // Пробую без классов, чтобы в proxy не попадали методы при наследовании. Вообще закидывать в Proxy целый класс пока странно.
-  player.isMakingTurn = true;
-  await waitForUserClick();
   console.log(`\nХодит ${player.name}`);
   // player.isImmune = false; // Снимаем старый иммунитет, если он есть.
 
+  await sleep(2000);
   player.hand.push(deck.getCard());
+  await sleep(2000);
+
   console.log(`${player.name} берёт карту и у него становится ${player.hand.length} карт`, player.hand.map(cardToString).join(', '));
   logDeck(deck);
 
   const posibleOpponents = opponents.filter((opponent) => !opponent.isImmune);
-  const { card, target, cardToKill } = await chooseCardAndTarget(player, posibleOpponents);
+  const { card, target, cardToKill } = await getTurn(player, posibleOpponents);
 
   switch (card.value) {
     case 1:
@@ -160,11 +165,9 @@ async function makeTurn(player, opponents, deck, grave) {
       break;
     case 6:
       console.log(`${player.name} меняется картами с ${target.name}`);
-      const playerCard = player.hand.pop();
-      console.log(`У ${player.name} в руке ${cardToString(playerCard)}`);
-      const targetCard = target.hand.pop();
-      player.hand.push(targetCard);
-      target.hand.push(playerCard);
+      const temp = [...player.hand];
+      player.hand = target.hand;
+      target.hand = temp;
       break;
     case 7:
       console.log(`${player.name} играет графиню. Ничего не происходит`);
@@ -176,18 +179,19 @@ async function makeTurn(player, opponents, deck, grave) {
     default:
   }
   grave.push(card);
+  player.isMakingTurn = false;
+  await sleep(2000);
 }
 
-async function chooseCardAndTarget(player, opponents) {
-  sleep(2000);
-  return {
-    card: player.hand.pop(),
-    target: opponents[0],
-    cardToKill: 1
+async function getTurn(player, opponents) {
+  switch (player.type) {
+    case 'ai':
+      return await getAiTurn(player.hand, opponents);
+    default:
+      return {
+        card: player.hand.pop(),
+        target: opponents[0],
+        cardToKill: 1
+      }
   }
 }
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-

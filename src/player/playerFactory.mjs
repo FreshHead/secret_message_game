@@ -21,6 +21,7 @@ function createPlayer(name, type, firstCard) {
         hand: [firstCard],
         isImmune: false,
         isDead: false,
-        isMakingTurn: false
+        isMakingTurn: false,
+        isWinner: false
     }
 }
