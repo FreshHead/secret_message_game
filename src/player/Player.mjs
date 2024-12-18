@@ -2,6 +2,7 @@ export default class Player {
   hand = []; // Не может быть более 2-х карт
   isImmune = false; // Этот ход защищён под действием служанки
   isDead = false; // Выбыл из игры
+  isMakingTurn = false;
 
   /**
    * @param {string} name

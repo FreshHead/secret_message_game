@@ -38,3 +38,11 @@ body {
 	align-items: center;
 	gap: 16px;
 }
+
+.player {
+	text-align: center;
+}
+
+.active {
+	color: green;
+}

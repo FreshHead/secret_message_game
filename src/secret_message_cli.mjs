@@ -22,6 +22,8 @@ async function gameLoop() {
   const opponents = [new RenderedAI('Махина', deck.getCard()), new RenderedAI('Игорёк', deck.getCard()), new RenderedAI('Игорёк2', deck.getCard())]
 
   const players = [new User(deck.getCard()), ...opponents];
+  players[1].isMakingTurn = true;
+  players[1].some = 123;
 
   let existingPlayers = players;
   while (deck.length > 0 && existingPlayers.length > 1) {
@@ -98,6 +100,7 @@ function cardToString(card) {
   * @param {Array<Player>} opponents
   */
 async function makeTurn(player, opponents, deck, grave) {
+  player.isMakingTurn = true;
   await waitForUserClick();
   console.log(`\nХодит ${player.name}`);
   player.isImmune = false; // Снимаем старый иммунитет, если он есть.
@@ -108,6 +111,7 @@ async function makeTurn(player, opponents, deck, grave) {
 
   const posibleOpponents = opponents.filter((opponent) => !opponent.isImmune);
   const { card, target, cardToKill } = await player.chooseCardAndTarget(posibleOpponents);
+  target.isMakingTurn = true;
 
   switch (card.value) {
     case 1:
