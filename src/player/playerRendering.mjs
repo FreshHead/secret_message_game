@@ -11,20 +11,23 @@ export function initUi(player, placementDiv) {
     placementDiv.appendChild(uiOpponent);
 
     return new Proxy(player, {
-        get(target, prop) {
-            console.log({ prop, value: target[prop] })
+        set(target, prop, value) {
             if (prop === 'isMakingTurn') {
-                if (target[prop]) {
+                if (value) {
                     uiOpponent.classList.add('active');
                 } else {
-                    uiOpponent.classList.remove('active');
+                    uiOpponent.classList.remove(['active']);
                 }
             }
+            return true;
+        },
+        get(target, prop) {
             if (prop === 'hand') {
                 renderCards(cardContainer, target[prop]);
             }
             if (prop === 'isDead') {
                 if (target[prop]) {
+                    cardContainer.textContent = '';
                     uiOpponent.classList.add('dead');
                 }
             }
@@ -33,26 +36,13 @@ export function initUi(player, placementDiv) {
     });
 }
 
-export function createDeadProxy(uiPlayer, cards) {
-    return new Proxy(new Boolean(false), {
-        get(target, prop) {
-            if (target == true) {
-                console.log("!!")
-                uiPlayer.classList.add('dead');
-                cards = [];
-            }
-            return target[prop];
-        }
-    })
-}
-
-function renderCards(cardsContainer, cards) {
-    cardsContainer.textContent = '';
+function renderCards(cardContainer, cards) {
+    cardContainer.textContent = '';
 
     cards.forEach((card) => {
         const uiCard = document.createElement('div');
         uiCard.innerHTML = `${card.name} (${card.value})`;
         uiCard.classList.add('card');
-        cardsContainer.appendChild(uiCard);
+        cardContainer.appendChild(uiCard);
     })
 }

@@ -1,5 +1,6 @@
 import Deck from "./card/Deck.mjs";
 import Player from './player/Player.mjs';
+import { createAi, createUser } from "./player/playerFactory.mjs";
 import User from "./player/User.mjs";
 import RenderedAI from "./player/RenderedAI.mjs";
 
@@ -19,11 +20,10 @@ async function gameLoop() {
 
   const deck = new Deck();
   const grave = [];
-  const opponents = [new RenderedAI('Махина', deck.getCard()), new RenderedAI('Игорёк', deck.getCard()), new RenderedAI('Игорёк2', deck.getCard())]
-
-  const players = [new User(deck.getCard()), ...opponents];
-  players[1].isMakingTurn = true;
-  players[1].some = 123;
+  // const opponents = [new RenderedAI('Махина', deck.getCard()), new RenderedAI('Игорёк', deck.getCard()), new RenderedAI('Игорёк2', deck.getCard())]
+  const opponents = [createAi('Махина', deck.getCard()), createAi('Игорёк', deck.getCard()), createAi('Костя', deck.getCard())]
+  // const players = [new User(deck.getCard()), ...opponents];
+  const players = [createUser('Игрок', deck.getCard()), ...opponents];
 
   let existingPlayers = players;
   while (deck.length > 0 && existingPlayers.length > 1) {
@@ -100,18 +100,19 @@ function cardToString(card) {
   * @param {Array<Player>} opponents
   */
 async function makeTurn(player, opponents, deck, grave) {
+  // Игроки это простой объект с набором свойств. Сверху на него навещивается Proxy и получается игрок с ui. Методы ИИ могут смотреть на св-во type, чтобы не использовать классы.
+  // // Пробую без классов, чтобы в proxy не попадали методы при наследовании. Вообще закидывать в Proxy целый класс пока странно.
   player.isMakingTurn = true;
   await waitForUserClick();
   console.log(`\nХодит ${player.name}`);
-  player.isImmune = false; // Снимаем старый иммунитет, если он есть.
+  // player.isImmune = false; // Снимаем старый иммунитет, если он есть.
 
   player.hand.push(deck.getCard());
   console.log(`${player.name} берёт карту и у него становится ${player.hand.length} карт`, player.hand.map(cardToString).join(', '));
   logDeck(deck);
 
   const posibleOpponents = opponents.filter((opponent) => !opponent.isImmune);
-  const { card, target, cardToKill } = await player.chooseCardAndTarget(posibleOpponents);
-  target.isMakingTurn = true;
+  const { card, target, cardToKill } = await chooseCardAndTarget(player, posibleOpponents);
 
   switch (card.value) {
     case 1:
@@ -176,3 +177,17 @@ async function makeTurn(player, opponents, deck, grave) {
   }
   grave.push(card);
 }
+
+async function chooseCardAndTarget(player, opponents) {
+  sleep(2000);
+  return {
+    card: player.hand.pop(),
+    target: opponents[0],
+    cardToKill: 1
+  }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
