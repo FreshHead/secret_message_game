@@ -33,8 +33,7 @@ export function initUi(player, placementDiv) {
         },
         get(target, prop) {
             if (prop === 'hand') { // Ловушка для изменения массива hand при push, unshift, pop, shift...
-                renderCards(cardContainer, target[prop]);
-            }
+                renderCards(cardContainer, target[prop]); }
             if (prop === 'isDead') {
                 if (target[prop]) {
                     cardContainer.textContent = '';
@@ -51,8 +50,14 @@ function renderCards(cardContainer, cards) {
 
     cards.forEach((card) => {
         const uiCard = document.createElement('div');
-        uiCard.innerHTML = `${card.name} (${card.value})`;
+
+        const uiText = document.createElement('div');
+        uiText.classList.add('card-text');
+        uiText.innerHTML = `${card.name} (${card.value})`;
+        uiCard.appendChild(uiText);
+
         uiCard.classList.add('card');
+        uiCard.style.background = `url('assets/cards/${card.filename}') no-repeat center / cover`;
         cardContainer.appendChild(uiCard);
     })
 }

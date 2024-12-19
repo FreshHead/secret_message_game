@@ -10,14 +10,14 @@ export default class Deck {
     Princess: 1,
   };
   cardDict = new Map([
-    ["Gurdian", { name: 'Стражница', value: 1 }],
-    ["Monk", { name: 'Священник', value: 2 }],
-    ["Baron", { name: 'Барон', value: 3 }],
-    ["Maid", { name: 'Служанка', value: 4 }],
-    ["Prince", { name: 'Принц', value: 5 }],
-    ["King", { name: 'Король', value: 6 }],
-    ["Countess", { name: 'Графиня', value: 7 }],
-    ["Princess", { name: 'Принцесса', value: 8 }],
+    ["Gurdian", { name: 'Стражница', value: 1, filename: 'guardian.png' }],
+    ["Monk", { name: 'Священник', value: 2, filename: 'monk.png' }],
+    ["Baron", { name: 'Барон', value: 3, filename: 'baron.png' }],
+    ["Maid", { name: 'Служанка', value: 4, filename: 'maid.png' }],
+    ["Prince", { name: 'Принц', value: 5, filename: 'prince.png' }],
+    ["King", { name: 'Король', value: 6, filename: 'king.png' }],
+    ["Countess", { name: 'Графиня', value: 7, filename: 'countess.png' }],
+    ["Princess", { name: 'Принцесса', value: 8, filename: 'princess.png' }],
   ]);
   cards = new Array(16);
 
