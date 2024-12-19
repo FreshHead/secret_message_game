@@ -26,13 +26,13 @@ export function initUi(player, placementDiv) {
                 }
             }
 
-            if (prop === 'hand') {
+            if (prop === 'hand') { // Ловушка при перезаписи массива hand.
                 renderCards(cardContainer, target[prop]);
             }
             return true;
         },
         get(target, prop) {
-            if (prop === 'hand') { // смена через pop() и push()
+            if (prop === 'hand') { // Ловушка для изменения массива hand при push, unshift, pop, shift...
                 renderCards(cardContainer, target[prop]);
             }
             if (prop === 'isDead') {
