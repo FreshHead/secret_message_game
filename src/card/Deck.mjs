@@ -1,3 +1,5 @@
+import { initUi } from "./deckRendering.mjs";
+
 export default class Deck {
   cardQuantity = {
     Gurdian: 5,
@@ -41,6 +43,7 @@ export default class Deck {
     }
     // Shuffle cards
     this.cards = this.cards.sort(() => Math.floor(Math.random() * 3 - 1));
+    this.cards = initUi(this.cards);
   }
 
   get length() {

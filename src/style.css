@@ -21,6 +21,7 @@ body {
 
 #board {
 	height: 100%;
+	margin: 0 16px;
 
 	display: flex;
 	flex-direction: column;
@@ -41,6 +42,8 @@ body {
 	height: 150px;
 	background-color: grey;
 	border: solid;
+
+	text-align: center;
 }
 
 .card-container {
@@ -50,10 +53,20 @@ body {
 	gap: 16px;
 }
 
+#deck {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 50px;
+}
+
 #user .card {
-	text-align: center;
 	width: 200px;
 	height: 300px;
+}
+
+#opponents .card {
+	background: url('assets/cards/card_shirt.png') no-repeat center / cover;
 }
 
 .active {

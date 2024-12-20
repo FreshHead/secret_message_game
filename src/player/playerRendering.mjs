@@ -27,13 +27,13 @@ export function initUi(player, placementDiv) {
             }
 
             if (prop === 'hand') { // Ловушка при перезаписи массива hand.
-                renderCards(cardContainer, target[prop]);
+                renderCards(player.type, cardContainer, target[prop]);
             }
             return true;
         },
         get(target, prop) {
             if (prop === 'hand') { // Ловушка для изменения массива hand при push, unshift, pop, shift...
-                renderCards(cardContainer, target[prop]); }
+                renderCards(player.type, cardContainer, target[prop]); }
             if (prop === 'isDead') {
                 if (target[prop]) {
                     cardContainer.textContent = '';
@@ -45,7 +45,7 @@ export function initUi(player, placementDiv) {
     });
 }
 
-function renderCards(cardContainer, cards) {
+function renderCards(playerType, cardContainer, cards) {
     cardContainer.textContent = '';
 
     cards.forEach((card) => {
@@ -57,7 +57,9 @@ function renderCards(cardContainer, cards) {
         uiCard.appendChild(uiText);
 
         uiCard.classList.add('card');
-        uiCard.style.background = `url('assets/cards/${card.filename}') no-repeat center / cover`;
+        if (playerType === 'user') {
+            uiCard.style.background = `url('assets/cards/${card.filename}') no-repeat center / cover`;
+        }
         cardContainer.appendChild(uiCard);
     })
 }

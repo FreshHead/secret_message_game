@@ -69,7 +69,7 @@ async function gameLoop() {
   console.log('Игра окончена.');
 }
 
-function waitForUserClick() {
+function waitForNextBtnClick() {
   return new Promise((resolve) => {
     document.getElementById('next-btn').addEventListener('click', resolve, { once: true });
   })
@@ -111,7 +111,6 @@ async function makeTurn(player, opponents, deck, grave) {
 
   await sleep(2000);
   player.hand.push(deck.getCard());
-  await sleep(2000);
 
   console.log(`${player.name} берёт карту и у него становится ${player.hand.length} карт`, player.hand.map(cardToString).join(', '));
   logDeck(deck);
