@@ -2,6 +2,7 @@ import Deck from "./card/Deck.mjs";
 import { createAi, createUser } from "./player/playerFactory.mjs";
 import { getAiTurn } from "./player/ai.mjs";
 import { initGraveUi } from "./card/graveRendering.mjs";
+import { renderPlayedCard } from "./card/tableRendering.mjs";
 import { sleep } from "./utils.mjs";
 
 // Всё что касается выбора карт может находится в классе игрока.
@@ -20,6 +21,7 @@ async function gameLoop() {
 
   const deck = new Deck();
   const grave = initGraveUi();
+
   // const opponents = [new RenderedAI('Махина', deck.getCard()), new RenderedAI('Игорёк', deck.getCard()), new RenderedAI('Игорёк2', deck.getCard())]
   const opponents = [createAi('Махина', deck.getCard()), createAi('Игорёк', deck.getCard()), createAi('Костя', deck.getCard())]
   // const players = [new User(deck.getCard()), ...opponents];
@@ -118,6 +120,8 @@ async function makeTurn(player, opponents, deck, grave) {
 
   const posibleOpponents = opponents.filter((opponent) => !opponent.isImmune);
   const { card, target, cardToKill } = await getTurn(player, posibleOpponents);
+
+  renderPlayedCard(card);
 
   switch (card.value) {
     case 1:
