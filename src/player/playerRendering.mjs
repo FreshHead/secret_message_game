@@ -3,7 +3,7 @@ export function initUi(player, placementDiv) {
     cardContainer.classList.add('card-container');
 
     const uiOpponent = document.createElement('div');
-    cardContainer.classList.add('player');
+    uiOpponent.classList.add('player');
 
     uiOpponent.textContent = player.name;
     uiOpponent.appendChild(cardContainer);
@@ -33,7 +33,8 @@ export function initUi(player, placementDiv) {
         },
         get(target, prop) {
             if (prop === 'hand') { // Ловушка для изменения массива hand при push, unshift, pop, shift...
-                renderCards(player.type, cardContainer, target[prop]); }
+                renderCards(player.type, cardContainer, target[prop]);
+            }
             if (prop === 'isDead') {
                 if (target[prop]) {
                     cardContainer.textContent = '';
@@ -59,6 +60,8 @@ function renderCards(playerType, cardContainer, cards) {
         uiCard.classList.add('card');
         if (playerType === 'user') {
             uiCard.style.background = `url('assets/cards/${card.filename}') no-repeat center / cover`;
+        } else {
+            uiCard.classList.add('card-shirt');
         }
         cardContainer.appendChild(uiCard);
     })

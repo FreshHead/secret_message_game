@@ -1,6 +1,7 @@
 import Deck from "./card/Deck.mjs";
 import { createAi, createUser } from "./player/playerFactory.mjs";
 import { getAiTurn } from "./player/ai.mjs";
+import { initGraveUi } from "./card/graveRendering.mjs";
 import { sleep } from "./utils.mjs";
 
 // Всё что касается выбора карт может находится в классе игрока.
@@ -18,7 +19,7 @@ async function gameLoop() {
   console.log('\n\nИгра началась');
 
   const deck = new Deck();
-  const grave = [];
+  const grave = initGraveUi();
   // const opponents = [new RenderedAI('Махина', deck.getCard()), new RenderedAI('Игорёк', deck.getCard()), new RenderedAI('Игорёк2', deck.getCard())]
   const opponents = [createAi('Махина', deck.getCard()), createAi('Игорёк', deck.getCard()), createAi('Костя', deck.getCard())]
   // const players = [new User(deck.getCard()), ...opponents];

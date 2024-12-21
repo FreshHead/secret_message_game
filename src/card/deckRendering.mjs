@@ -8,7 +8,7 @@ export function initUi(cards) {
   return new Proxy(cards, {
     get(target, prop) {
       if (prop === 'pop') {
-        cardCount.textContent = target.length;
+        cardCount.textContent = target.length - 1;
       }
       return target[prop];
     }
