@@ -8,7 +8,6 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start:cli": "node src/game_cli.mjs",
-    "test": "node ./tests/combinations.test.mjs"
+    "start": "serve src"
   }
 }
