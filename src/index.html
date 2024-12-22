@@ -1,13 +1,22 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <title>Тайное послание</title>
-    <script type="module" src="game_gui.js"></script>
-    <script type="module" src="player/User.mjs"></script>
-  </head>
-  <body>
-    <game-user id="user" class="red"></game-user>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <title>Тайное послание</title>
+  <script type="module" src="secret_message_cli.mjs"></script>
+</head>
+
+<body>
+  <div id="board">
+    <div id="opponents"></div>
+    <div id="deck" class="card card-shirt"></div>
+    <div id="table"></div>
+    <div id="grave"></div>
+    <div id="user">
+    </div>
+  </div>
+</body>
+
 </html>

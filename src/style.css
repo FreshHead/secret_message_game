@@ -1,0 +1,119 @@
+html,
+body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.menu {
+	display: flex;
+	justify-content: center;
+}
+
+#opponents {
+	grid-area: opponents;
+
+	display: flex;
+	justify-content: space-around;
+}
+
+#board {
+	height: 100%;
+	margin: 0 16px;
+
+	display: grid;
+	grid-template-areas:
+		"opponents opponents opponents"
+		"deck table grave"
+		". user grave";
+	grid-template-columns: 120px 1fr 120px;
+}
+
+#table {
+	grid-area: table;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.dead {
+	color: grey;
+}
+
+
+.card {
+	display: flex;
+	align-items: end;
+	justify-content: center;
+
+	width: 100px;
+	height: 150px;
+	background-color: grey;
+	border: solid;
+
+	text-align: center;
+}
+
+.card-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 16px;
+}
+
+#opponents .card-container {
+	width: 300px;
+}
+
+#deck {
+	grid-area: deck;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 50px;
+	color: white;
+}
+
+#grave {
+	grid-area: grave;
+
+	display: grid;
+	grid-template-rows: repeat(13, 20px);
+}
+
+#user {
+	grid-area: user;
+}
+
+#user .card {
+	width: 200px;
+	height: 300px;
+}
+
+.card-shirt {
+	background: url('assets/cards/card_shirt.png') no-repeat center / cover;
+}
+
+.active {
+	color: green;
+}
+
+.winner {
+	color: orange;
+}
+
+.card-text {
+	color: white;
+	text-shadow: 2px 1px black;
+	font-size: 20px;
+}
+
+.player {
+	text-align: center;
+}
