@@ -15,3 +15,7 @@ export function renderPlayedCard(card) {
 
   table.appendChild(uiCard);
 }
+
+export function clearPlayedCard() {
+  table.textContent = '';
+}

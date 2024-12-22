@@ -1,8 +1,8 @@
 import Deck from "./card/Deck.mjs";
 import { createAi, createUser } from "./player/playerFactory.mjs";
-import { getAiTurn } from "./player/ai.mjs";
+import { makeAiMove as makeAiMove } from "./player/ai.mjs";
 import { initGraveUi } from "./card/graveRendering.mjs";
-import { renderPlayedCard } from "./card/tableRendering.mjs";
+import { renderPlayedCard, clearPlayedCard } from "./card/tableRendering.mjs";
 import { sleep } from "./utils.mjs";
 
 // Всё что касается выбора карт может находится в классе игрока.
@@ -11,7 +11,11 @@ import { sleep } from "./utils.mjs";
 // Намерено решил не создавать класс Card с подклассами для хранения логики разыгрывания конкретной карты,
 // чтобы карта не могла убивать игроков и т.д. switch в game loop вполне устраивает.
 
-document.getElementById('start-btn').addEventListener('click', gameLoop);
+// Можно хранить местонахождение карты в самой карте и добавить ей метод render. Тогда, одна и та же карта не может быть в двух разных местах одновременно.
+// Можно представить игру как state машину. Каждая часть хода это тик, в котором должен совершиться рендеринг элементов.
+// В начале тика определяется в какое состояние мы переходим в зависимости от текущего. Правда зачем рендерить не изменённые элементы?
+
+gameLoop();
 
 async function gameLoop() {
   const opponentsContainer = document.getElementById('opponents');
@@ -22,9 +26,7 @@ async function gameLoop() {
   const deck = new Deck();
   const grave = initGraveUi();
 
-  // const opponents = [new RenderedAI('Махина', deck.getCard()), new RenderedAI('Игорёк', deck.getCard()), new RenderedAI('Игорёк2', deck.getCard())]
   const opponents = [createAi('Махина', deck.getCard()), createAi('Игорёк', deck.getCard()), createAi('Костя', deck.getCard())]
-  // const players = [new User(deck.getCard()), ...opponents];
   const players = [createUser('Игрок', deck.getCard()), ...opponents];
 
   let existingPlayers = players;
@@ -106,22 +108,21 @@ function cardToString(card) {
   */
 async function makeTurn(player, opponents, deck, grave) {
   player.isMakingTurn = true;
-  // await waitForUserClick();
-  // Игроки это простой объект с набором свойств. Сверху на него навещивается Proxy и получается игрок с ui. Методы ИИ могут смотреть на св-во type, чтобы не использовать классы.
-  // // Пробую без классов, чтобы в proxy не попадали методы при наследовании. Вообще закидывать в Proxy целый класс пока странно.
   console.log(`\nХодит ${player.name}`);
-  // player.isImmune = false; // Снимаем старый иммунитет, если он есть.
+  player.isImmune = false; // Снимаем старый иммунитет, если он есть.
+  await sleep();
 
-  await sleep(2000);
+
   player.hand.push(deck.getCard());
-
   console.log(`${player.name} берёт карту и у него становится ${player.hand.length} карт`, player.hand.map(cardToString).join(', '));
   logDeck(deck);
+  await sleep();
 
   const posibleOpponents = opponents.filter((opponent) => !opponent.isImmune);
-  const { card, target, cardToKill } = await getTurn(player, posibleOpponents);
+  const { card, target, cardToKill } = await makeMove(player, posibleOpponents);
 
   renderPlayedCard(card);
+  await sleep();
 
   switch (card.value) {
     case 1:
@@ -182,15 +183,17 @@ async function makeTurn(player, opponents, deck, grave) {
       break;
     default:
   }
+  await sleep();
+
+  clearPlayedCard();
   grave.push(card);
   player.isMakingTurn = false;
-  await sleep(2000);
 }
 
-async function getTurn(player, opponents) {
+async function makeMove(player, opponents) {
   switch (player.type) {
     case 'ai':
-      return await getAiTurn(player.hand, opponents);
+      return await makeAiMove(player.hand, opponents);
     default:
       return {
         card: player.hand.pop(),

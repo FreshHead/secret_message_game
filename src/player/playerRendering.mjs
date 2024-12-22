@@ -31,8 +31,9 @@ export function initUi(player, placementDiv) {
             }
             return true;
         },
-        get(target, prop) {
+        get(target, prop, receiver) {
             if (prop === 'hand') { // Ловушка для изменения массива hand при push, unshift, pop, shift...
+                console.log({ targetProp: target[prop] })
                 renderCards(player.type, cardContainer, target[prop]);
             }
             if (prop === 'isDead') {
